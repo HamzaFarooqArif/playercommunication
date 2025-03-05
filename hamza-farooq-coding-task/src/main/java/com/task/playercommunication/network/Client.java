@@ -1,7 +1,9 @@
-package com.task.playercommunication;
+package com.task.playercommunication.network;
 
 import java.io.IOException;
 import java.net.Socket;
+
+import com.task.playercommunication.Player;
 
 /**
  * Client class that acts as Player 2, connecting to Player 1 (Server).

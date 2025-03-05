@@ -1,5 +1,8 @@
 package com.task.playercommunication;
 
+import com.task.playercommunication.network.Client;
+import com.task.playercommunication.network.Server;
+
 /**
  * Main class to start either the Server (Player 1) or Client (Player 2).
  */

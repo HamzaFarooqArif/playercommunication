@@ -1,8 +1,10 @@
-package com.task.playercommunication;
+package com.task.playercommunication.network;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+
+import com.task.playercommunication.Player;
 
 /**
  * Server class that acts as Player 1, waiting for Player 2 (Client) to connect.
