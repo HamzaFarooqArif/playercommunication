@@ -3,19 +3,15 @@ package com.task.playercommunication;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-/**
- * The Player class represents a player that can send and receive messages.
- * Uses BlockingQueue to store received messages and processes them sequentially.
- */
 public class Player implements MessageObserver {
     private final String name;
     private final MessageDispatcher dispatcher;
     private final BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>();
     private int messageCount = 0;
 
-    public Player(String name, MessageDispatcher dispatcher) {
+    public Player(String name) {
         this.name = name;
-        this.dispatcher = dispatcher;
+        this.dispatcher = MessageDispatcher.getInstance();
         this.dispatcher.registerPlayer(name, this); // Register with dispatcher
         startMessageProcessing(); // Start processing received messages
     }
@@ -40,6 +36,9 @@ public class Player implements MessageObserver {
 
     private void startMessageProcessing() {
         new Thread(() -> {
+            System.out.println(name + " PID: " + ProcessHandle.current().pid() + 
+                           " running on thread: " + Thread.currentThread().getName());
+
             while (messageCount < Constants.MESSAGE_LIMIT) {
                 try {
                     Message receivedMessage = messageQueue.take(); // Block until message arrives

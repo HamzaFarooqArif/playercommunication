@@ -7,7 +7,16 @@ import java.util.Map;
  * MessageDispatcher routes messages between specific players.
  */
 public class MessageDispatcher {
+    private static final MessageDispatcher INSTANCE = new MessageDispatcher();
     private final Map<String, MessageObserver> observers = new HashMap<>();
+
+    private MessageDispatcher() {
+        
+    }
+
+    public static MessageDispatcher getInstance() {
+        return INSTANCE;
+    }
 
     public void registerPlayer(String name, MessageObserver observer) {
         observers.put(name, observer);
