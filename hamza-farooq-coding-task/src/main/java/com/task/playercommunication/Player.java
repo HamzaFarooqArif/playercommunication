@@ -1,54 +1,50 @@
 package com.task.playercommunication;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.io.*;
+import java.net.*;
 
-public class Player implements MessageObserver {
-    private final String name;
-    private final MessageDispatcher dispatcher;
-    private final BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>();
+/**
+ * Represents a Player in the socket communication game.
+ * Each player can send and receive messages from another player.
+ */
+public class Player {
+    private Socket socket;
+    private BufferedReader input;
+    private PrintWriter output;
     private int messageCount = 0;
+    private String name;
 
-    public Player(String name) {
+    public Player(String name, Socket socket) throws IOException {
         this.name = name;
-        this.dispatcher = MessageDispatcher.getInstance();
-        this.dispatcher.registerPlayer(name, this); // Register with dispatcher
-        startMessageProcessing(); // Start processing received messages
+        this.socket = socket;
+        this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.output = new PrintWriter(socket.getOutputStream(), true);
     }
 
-    public void sendMessage(String recipient, String message) {
-        if (messageCount < Constants.MESSAGE_LIMIT) {
-            Message msg = new Message(name, recipient, message);
-            System.out.println(msg);
-            messageCount++;
-            dispatcher.sendMessage(msg);
+    public void sendMessage(String message) {
+        messageCount++;
+        System.out.println(name + " sending: " + message);
+        output.println(message);
+    }
+
+    public String receiveMessage() throws IOException {
+        String received = input.readLine();
+        if (received != null) {
+            System.out.println(name + " received: " + received);
+            return received;
         }
+        return "";
     }
 
-    @Override
-    public void onMessageReceived(Message message) {
-        try {
-            messageQueue.put(message); // Store message in queue
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+    public boolean isConnected() {
+        return !socket.isClosed();
     }
 
-    private void startMessageProcessing() {
-        new Thread(() -> {
-            System.out.println(name + " PID: " + ProcessHandle.current().pid() + 
-                           " running on thread: " + Thread.currentThread().getName());
+    public int getMessageCount() {
+        return messageCount;
+    }
 
-            while (messageCount < Constants.MESSAGE_LIMIT) {
-                try {
-                    Message receivedMessage = messageQueue.take(); // Block until message arrives
-                    System.out.println(name + " <- " + receivedMessage);
-                    sendMessage(receivedMessage.getSender(), "Reply " + messageCount);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    break;
-                }
-            }
-        }).start();
+    public void close() throws IOException {
+        socket.close();
     }
 }
