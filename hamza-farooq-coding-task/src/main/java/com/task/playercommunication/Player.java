@@ -5,7 +5,6 @@ import java.net.*;
 
 /**
  * Represents a Player in the socket communication game.
- * Each player can send and receive messages from another player.
  */
 public class Player {
     private Socket socket;
@@ -34,10 +33,6 @@ public class Player {
             return received;
         }
         return "";
-    }
-
-    public boolean isConnected() {
-        return !socket.isClosed();
     }
 
     public int getMessageCount() {
