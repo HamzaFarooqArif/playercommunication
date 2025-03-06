@@ -8,11 +8,13 @@ import com.task.playercommunication.network.Server;
  */
 public class App {
     public static void main(String[] args) {
-        
-
-        startInSameProcess();
-        
-        
+        if (args.length > 0 && "separate".equalsIgnoreCase(args[0])) {
+            System.out.println("[INFO] Running in separate process mode...");
+            startSeparateProcess();
+        } else {
+            System.out.println("[INFO] Running in same process mode...");
+            startInSameProcess();
+        }
     }
 
     private static void startInSameProcess() {
