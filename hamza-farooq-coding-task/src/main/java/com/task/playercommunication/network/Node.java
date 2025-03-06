@@ -4,8 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.List;
 
+import com.task.playercommunication.Constants;
 import com.task.playercommunication.Message;
 import com.task.playercommunication.Player;
 
@@ -15,38 +15,40 @@ public abstract class Node {
     PrintWriter output;
     Player sender;
     Player reciever;
-    List<Message> messages;
+    int messageCount = 0;
 
     String receiveMessage() throws IOException {
         String received = input.readLine();
         if (received != null) {
             System.out.println(sender.getName() + " received: " + received);
+            messageCount++;
             return received;
         }
         return "";
     }
 
     void sendMessage(Message message) {
-        this.messages.add(message);
         System.out.println(message);
-        output.println(message);
+        output.println(message.getContent());
     }
 
     void gameLoop(boolean isInitiator) throws IOException {
         if (isInitiator) {
-            Message msg = new Message(sender.getName(), reciever.getName(), "Hello");
+            Message msg = new Message(sender.getName(), reciever.getName(), "0");
             sendMessage(msg);
         }
 
-        while (messages.size() < 10) {
+        while (messageCount < Constants.MESSAGE_LIMIT - 1) {
             String received = receiveMessage();
             if (received.isEmpty()) break;
 
-            Message msg = new Message(sender.getName(), reciever.getName(), messages.size()+"");
+            String content = received + " " + messageCount;
+
+            Message msg = new Message(sender.getName(), reciever.getName(), content);
             sendMessage(msg);
         }
 
-        System.out.println("Game finished. Closing connection...");
+        System.out.println("Game finished. " + sender.getName() +" Closing connection...");
         close();
     }
 

@@ -1,34 +1,48 @@
 package com.task.playercommunication;
 
-import com.task.playercommunication.network.Server;
 import com.task.playercommunication.network.Client;
+import com.task.playercommunication.network.Server;
 
 /**
- * Runs both the Server and Client in the same Java process.
+ * Main class to start either the Server (Player 1) or Client (Player 2).
  */
 public class App {
     public static void main(String[] args) {
-        // Start the server in a separate thread
+        
+
+        startInSameProcess();
+        
+        
+    }
+
+    private static void startInSameProcess() {
         Thread serverThread = new Thread(() -> {
+            new Server();
+        });
+
+        Thread clientThread = new Thread(() -> {
             try {
-                new Server();
-            } catch (Exception e) {
-                System.out.println("[ERROR] Server failed to start: " + e.getMessage());
+                new Client();
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
             }
         });
 
-        serverThread.start(); // Run Server in a separate thread
+        serverThread.start();
+        clientThread.start();
+    }
 
-        // Wait a bit for the server to start before launching client
-        try {
-            Thread.sleep(2000); // Give server time to initialize
-        } catch (InterruptedException ignored) {}
-
-        // Start the client in the main thread
+    private static void startSeparateProcess() {
         try {
             new Client();
         } catch (Exception e) {
-            System.out.println("[ERROR] Client failed to start: " + e.getMessage());
+            try {
+                new Server();
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 }
