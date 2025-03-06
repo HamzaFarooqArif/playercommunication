@@ -9,6 +9,14 @@ import com.task.playercommunication.Constants;
 import com.task.playercommunication.Message;
 import com.task.playercommunication.Player;
 
+/**
+ * Abstract base class for both Client and Server.
+ *
+ * Responsibilities:
+ * - Handles socket communication.
+ * - Manages message sending and receiving.
+ * - Implements the game loop logic.
+ */
 public abstract class Node {
     Socket socket;
     BufferedReader input;
@@ -17,6 +25,12 @@ public abstract class Node {
     Player reciever;
     int messageCount = 0;
 
+    /**
+     * Receives a message from the connected player.
+     *
+     * @return The received message content.
+     * @throws IOException If an error occurs during reading.
+     */
     String receiveMessage() throws IOException {
         String received = input.readLine();
         if (received != null) {
@@ -27,11 +41,22 @@ public abstract class Node {
         return "";
     }
 
+    /**
+     * Sends a message to the connected player.
+     *
+     * @param message The message to send.
+     */
     void sendMessage(Message message) {
         System.out.println(message);
         output.println(message.getContent());
     }
 
+    /**
+     * Implements the message exchange logic between players.
+     *
+     * @param isInitiator True if this player starts the communication.
+     * @throws IOException If an error occurs during communication.
+     */
     void gameLoop(boolean isInitiator) throws IOException {
         if (isInitiator) {
             Message msg = new Message(sender.getName(), reciever.getName(), "0");
@@ -52,6 +77,11 @@ public abstract class Node {
         close();
     }
 
+    /**
+     * Closes the socket connection.
+     *
+     * @throws IOException If an error occurs during closing.
+     */
     void close() throws IOException {
         socket.close();
     }

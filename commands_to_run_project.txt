@@ -1,2 +1,0 @@
-mvn package
-java -cp target/hamza-farooq-coding-task-1.0-SNAPSHOT.jar com.task.playercommunication.App

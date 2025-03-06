@@ -14,11 +14,21 @@ import com.task.playercommunication.Message;
 import com.task.playercommunication.Player;
 
 /**
- * Server class that acts as Player 1, waiting for Player 2 (Client) to connect.
+ * Server class representing Player 1, responsible for accepting Player 2's connection.
+ *
+ * Responsibilities:
+ * - Starts a server socket and waits for client connection.
+ * - Manages message exchange with the connected client.
+ * - Implements game loop logic for Player 1.
  */
 public class Server extends Node{
+
+    /**
+     * Initializes the Server and waits for a Client connection.
+     */
     public Server() {
         try (ServerSocket serverSocket = new ServerSocket(Constants.port)) {
+            System.out.println("[INFO] Server PID: " + ProcessHandle.current().pid() + ", Thread: " + Thread.currentThread().getName());
             System.out.println("Server started. Waiting for player 2 to connect...");
             
             this.socket = serverSocket.accept();

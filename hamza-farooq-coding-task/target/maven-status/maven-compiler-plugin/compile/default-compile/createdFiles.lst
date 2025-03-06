@@ -1,0 +1,7 @@
+com\task\playercommunication\App.class
+com\task\playercommunication\network\Node.class
+com\task\playercommunication\network\Client.class
+com\task\playercommunication\Player.class
+com\task\playercommunication\network\Server.class
+com\task\playercommunication\Message.class
+com\task\playercommunication\Constants.class
