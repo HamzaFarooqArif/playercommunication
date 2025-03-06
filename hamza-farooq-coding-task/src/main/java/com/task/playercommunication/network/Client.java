@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.task.playercommunication.Player;
 
@@ -15,6 +17,8 @@ public class Client {
     private Socket socket;
     private BufferedReader input;
     private PrintWriter output;
+
+    private List<String> messages;
     
     public Client() throws Exception {
         super();
@@ -24,7 +28,8 @@ public class Client {
             this.socket = socket;
             this.input = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
             this.output = new PrintWriter(this.socket.getOutputStream(), true);
-            
+            this.messages = new ArrayList<>();
+
             Player player = new Player("Player 2 (Client)");
             gameLoop(player);
         } catch (IOException e) {
@@ -33,11 +38,11 @@ public class Client {
     }
 
     private void gameLoop(Player player) throws IOException {
-        while (player.messageCount < 10) {
-            String received = receiveMessage(player.name);
+        while (messages.size() < 10) {
+            String received = receiveMessage(player.getName());
             if (received.isEmpty()) break;
 
-            sendMessage(player, received + " " + player.messageCount);
+            sendMessage(player, received + " " + messages.size());
         }
 
         System.out.println("Game finished. Closing connection...");
@@ -54,8 +59,8 @@ public class Client {
     }
 
     public void sendMessage(Player player, String message) {
-        player.messageCount++;
-        System.out.println(player.name + " sending: " + message);
+        messages.add(message);
+        System.out.println(player.getName() + " sending: " + message);
         output.println(message);
     }
 
