@@ -24,11 +24,9 @@ public class Server {
             this.input = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
             this.output = new PrintWriter(this.socket.getOutputStream(), true);
 
-            
-            Socket playerSocket = this.socket;
             System.out.println("Player 2 connected!");
 
-            Player player = new Player("Player 1 (Server)", playerSocket);
+            Player player = new Player("Player 1 (Server)");
             gameLoop(player, true); // Player 1 starts first
         } catch (IOException e) {
             e.printStackTrace();
@@ -37,17 +35,36 @@ public class Server {
 
     private void gameLoop(Player player, boolean isInitiator) throws IOException {
         if (isInitiator) {
-            player.sendMessage("Hello");
+            sendMessage(player, "Hello");
         }
 
-        while (player.getMessageCount() < 10) {
-            String received = player.receiveMessage();
+        while (player.messageCount < 10) {
+            String received = receiveMessage(player.name);
             if (received.isEmpty()) break;
 
-            player.sendMessage(received + " " + player.getMessageCount());
+            sendMessage(player, received + " " + player.messageCount);
         }
 
         System.out.println("Game finished. Closing connection...");
-        player.close();
+        close();
+    }
+
+    public String receiveMessage(String name) throws IOException {
+        String received = input.readLine();
+        if (received != null) {
+            System.out.println(name + " received: " + received);
+            return received;
+        }
+        return "";
+    }
+
+    public void sendMessage(Player player, String message) {
+        player.messageCount++;
+        System.out.println(player.name + " sending: " + message);
+        output.println(message);
+    }
+
+    public void close() throws IOException {
+        socket.close();
     }
 }

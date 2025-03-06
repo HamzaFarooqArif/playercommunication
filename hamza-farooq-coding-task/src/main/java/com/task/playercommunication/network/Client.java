@@ -25,7 +25,7 @@ public class Client {
             this.input = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
             this.output = new PrintWriter(this.socket.getOutputStream(), true);
             
-            Player player = new Player("Player 2 (Client)", socket);
+            Player player = new Player("Player 2 (Client)");
             gameLoop(player);
         } catch (IOException e) {
             throw new Exception(e);
@@ -33,14 +33,33 @@ public class Client {
     }
 
     private void gameLoop(Player player) throws IOException {
-        while (player.getMessageCount() < 10) {
-            String received = player.receiveMessage();
+        while (player.messageCount < 10) {
+            String received = receiveMessage(player.name);
             if (received.isEmpty()) break;
 
-            player.sendMessage(received + " " + player.getMessageCount());
+            sendMessage(player, received + " " + player.messageCount);
         }
 
         System.out.println("Game finished. Closing connection...");
-        player.close();
+        close();
+    }
+
+    public String receiveMessage(String name) throws IOException {
+        String received = input.readLine();
+        if (received != null) {
+            System.out.println(name + " received: " + received);
+            return received;
+        }
+        return "";
+    }
+
+    public void sendMessage(Player player, String message) {
+        player.messageCount++;
+        System.out.println(player.name + " sending: " + message);
+        output.println(message);
+    }
+
+    public void close() throws IOException {
+        socket.close();
     }
 }
