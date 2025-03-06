@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.task.playercommunication.Constants;
 import com.task.playercommunication.Player;
 
 /**
@@ -17,7 +18,7 @@ public class Client extends Node {
     
     public Client() throws Exception {
         super();
-        try (Socket socket = new Socket("localhost", 5000)) {
+        try (Socket socket = new Socket(Constants.hostname, Constants.port)) {
             System.out.println("Connected to Player 1!");
             
             this.socket = socket;
@@ -25,8 +26,10 @@ public class Client extends Node {
             this.output = new PrintWriter(this.socket.getOutputStream(), true);
             this.messages = new ArrayList<>();
 
-            Player player = new Player("Player 2 (Client)");
-            this.gameLoop(player, false);
+            this.sender = new Player(Constants.Player2);
+            this.reciever = new Player(Constants.Player1);
+
+            this.gameLoop(false);
         } catch (IOException e) {
             throw new Exception(e);
         }

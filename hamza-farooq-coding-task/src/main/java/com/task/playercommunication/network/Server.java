@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.task.playercommunication.Constants;
 import com.task.playercommunication.Message;
 import com.task.playercommunication.Player;
 
@@ -18,7 +19,7 @@ import com.task.playercommunication.Player;
 public class Server extends Node{
 
     public Server() {
-        try (ServerSocket serverSocket = new ServerSocket(5000)) {
+        try (ServerSocket serverSocket = new ServerSocket(Constants.port)) {
             System.out.println("Server started. Waiting for player 2 to connect...");
             
             this.socket = serverSocket.accept();
@@ -28,8 +29,10 @@ public class Server extends Node{
             
             System.out.println("Player 2 connected!");
 
-            Player player = new Player("Player 1 (Server)");
-            this.gameLoop(player, true); // Player 1 starts first
+            this.sender = new Player(Constants.Player1);
+            this.reciever = new Player(Constants.Player2);
+
+            this.gameLoop(true); // Player 1 starts first
         } catch (IOException e) {
             e.printStackTrace();
         }

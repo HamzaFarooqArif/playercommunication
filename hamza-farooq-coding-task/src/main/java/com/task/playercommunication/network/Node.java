@@ -6,40 +6,44 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
 
+import com.task.playercommunication.Message;
 import com.task.playercommunication.Player;
 
 public abstract class Node {
     Socket socket;
     BufferedReader input;
     PrintWriter output;
-    List<String> messages;
+    Player sender;
+    Player reciever;
+    List<Message> messages;
 
-    String receiveMessage(String name) throws IOException {
+    String receiveMessage() throws IOException {
         String received = input.readLine();
         if (received != null) {
-            System.out.println(name + " received: " + received);
+            System.out.println(sender.getName() + " received: " + received);
             return received;
         }
         return "";
     }
 
-    void sendMessage(Player player, String message) {
+    void sendMessage(Message message) {
         this.messages.add(message);
-
-        System.out.println(player.getName() + " sending: " + message);
+        System.out.println(message);
         output.println(message);
     }
 
-    void gameLoop(Player player, boolean isInitiator) throws IOException {
+    void gameLoop(boolean isInitiator) throws IOException {
         if (isInitiator) {
-            sendMessage(player, "Hello");
+            Message msg = new Message(sender.getName(), reciever.getName(), "Hello");
+            sendMessage(msg);
         }
 
         while (messages.size() < 10) {
-            String received = receiveMessage(player.getName());
+            String received = receiveMessage();
             if (received.isEmpty()) break;
 
-            sendMessage(player, received + " " + messages.size());
+            Message msg = new Message(sender.getName(), reciever.getName(), messages.size()+"");
+            sendMessage(msg);
         }
 
         System.out.println("Game finished. Closing connection...");
