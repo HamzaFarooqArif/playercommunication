@@ -14,7 +14,7 @@ public abstract class Node {
     PrintWriter output;
     List<String> messages;
 
-    private String receiveMessage(String name) throws IOException {
+    String receiveMessage(String name) throws IOException {
         String received = input.readLine();
         if (received != null) {
             System.out.println(name + " received: " + received);
@@ -23,14 +23,14 @@ public abstract class Node {
         return "";
     }
 
-    private void sendMessage(Player player, String message) {
+    void sendMessage(Player player, String message) {
         this.messages.add(message);
 
         System.out.println(player.getName() + " sending: " + message);
         output.println(message);
     }
 
-    private void gameLoop(Player player, boolean isInitiator) throws IOException {
+    void gameLoop(Player player, boolean isInitiator) throws IOException {
         if (isInitiator) {
             sendMessage(player, "Hello");
         }
@@ -46,7 +46,7 @@ public abstract class Node {
         close();
     }
 
-    public void close() throws IOException {
+    void close() throws IOException {
         socket.close();
     }
 }

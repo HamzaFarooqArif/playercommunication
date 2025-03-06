@@ -13,12 +13,7 @@ import com.task.playercommunication.Player;
 /**
  * Client class that acts as Player 2, connecting to Player 1 (Server).
  */
-public class Client {
-    private Socket socket;
-    private BufferedReader input;
-    private PrintWriter output;
-
-    private List<String> messages;
+public class Client extends Node {
     
     public Client() throws Exception {
         super();
@@ -31,40 +26,9 @@ public class Client {
             this.messages = new ArrayList<>();
 
             Player player = new Player("Player 2 (Client)");
-            gameLoop(player);
+            this.gameLoop(player, false);
         } catch (IOException e) {
             throw new Exception(e);
         }
-    }
-
-    private void gameLoop(Player player) throws IOException {
-        while (messages.size() < 10) {
-            String received = receiveMessage(player.getName());
-            if (received.isEmpty()) break;
-
-            sendMessage(player, received + " " + messages.size());
-        }
-
-        System.out.println("Game finished. Closing connection...");
-        close();
-    }
-
-    public String receiveMessage(String name) throws IOException {
-        String received = input.readLine();
-        if (received != null) {
-            System.out.println(name + " received: " + received);
-            return received;
-        }
-        return "";
-    }
-
-    public void sendMessage(Player player, String message) {
-        messages.add(message);
-        System.out.println(player.getName() + " sending: " + message);
-        output.println(message);
-    }
-
-    public void close() throws IOException {
-        socket.close();
     }
 }
